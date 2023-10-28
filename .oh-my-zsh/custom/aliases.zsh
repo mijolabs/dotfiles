@@ -1,5 +1,0 @@
-alias l='exa -bghlF --git'
-alias ll='exa -abghlF --git'
-alias pip='noglob pip'
-alias pip3='noglob pip3'
-alias gs='git status'
