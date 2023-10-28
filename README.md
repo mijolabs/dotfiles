@@ -1,2 +1,3 @@
 # dotfiles-macos
-My dotfiles for macOS systems
+
+My dotfiles for virgin macOS systems
