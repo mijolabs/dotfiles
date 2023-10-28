@@ -1,0 +1,1 @@
+/Users/x/.oh-my-zsh/custom/gnu-tools.zsh
