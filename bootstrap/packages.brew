@@ -13,6 +13,7 @@ go
 grep
 httpie
 make
+micro
 nano
 pyenv
 ripgrep
