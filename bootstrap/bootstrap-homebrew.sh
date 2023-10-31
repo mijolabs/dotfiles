@@ -3,15 +3,15 @@
 HOMEBREW_PACKAGES_FILENAME="packages.brew"
 
 
-# Install Xcode command line developer tools
+# Install Xcode command line tools
 xcode-select -p &> /dev/null
 if [ $? -ne 0 ]; then
     echo "[+] Installing Xcode command line developer tools..."
     touch /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress     # For softwareupdate to list Command Line Tools
-    PROD=$(softwareupdate -l | grep "\*.*Command Line" | tail -n 1 | sed 's/^[^C]* //')
-    softwareupdate -i "$PROD" --verbose;
+    PACKAGE_NAME=$(softwareupdate -l |  awk -F ': ' '/Label: Command Line Tools for Xcode/ {print $2}')
+    softwareupdate -i "$PACKAGE_NAME" --verbose
 else
-    echo "[+] Xcode command line developer already installed."
+    echo "[*] Xcode command line developer already installed."
 fi
 
 
@@ -29,9 +29,8 @@ while IFS= read -r package; do
 done < "$HOMEBREW_PACKAGES_FILENAME"
 
 if [ ${#HOMEBREW_PACKAGE_LIST[@]} -eq 0 ]; then
-    echo "[!] No Homebrew packages to install."
+    echo "[!] No Homebrew packages to install in file: $HOMEBREW_PACKAGES_FILENAME"
 else
     echo "[+] Installing Homebrew packages: ${HOMEBREW_PACKAGE_LIST[*]}"
-    await_installation_completion
     brew install ${HOMEBREW_PACKAGE_LIST[*]}
 fi
