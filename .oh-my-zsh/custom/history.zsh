@@ -1,1 +1,0 @@
-/Users/x/.oh-my-zsh/custom/history.zsh
