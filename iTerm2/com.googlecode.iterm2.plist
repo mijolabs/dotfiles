@@ -492,14 +492,16 @@
 			<false/>
 			<key>Foreground Color</key>
 			<dict>
+				<key>Alpha Component</key>
+				<real>1</real>
 				<key>Blue Component</key>
-				<real>0.58823529411764708</real>
+				<real>0.74975329637527466</real>
 				<key>Color Space</key>
-				<string>sRGB</string>
+				<string>P3</string>
 				<key>Green Component</key>
-				<real>0.58039215686274515</real>
+				<real>0.73916536569595337</real>
 				<key>Red Component</key>
-				<real>0.51372549019607838</real>
+				<real>0.68699812889099121</real>
 			</dict>
 			<key>Guid</key>
 			<string>1E873F9C-5BE9-4928-9EF8-7EE8A24D0260</string>
@@ -968,7 +970,7 @@
 			<key>Non-ASCII Anti Aliased</key>
 			<true/>
 			<key>Normal Font</key>
-			<string>BerkeleyMono-Regular 16</string>
+			<string>TX-02-Regular 16</string>
 			<key>Only The Default BG Color Uses Transparency</key>
 			<false/>
 			<key>Option Key Sends</key>
