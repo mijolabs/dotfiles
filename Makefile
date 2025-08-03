@@ -1,13 +1,13 @@
-.PHONY: all install system-defaults oh-my-zsh homebrew python fonts help
+.PHONY: all install macos-defaults oh-my-zsh homebrew python fonts help
 
 all: install
 
-install: system-defaults oh-my-zsh homebrew python fonts
+install: macos-defaults oh-my-zsh homebrew python fonts
 	@echo "🚀 macOS system bootstrapped!"
 
-system-defaults:
+macos-defaults:
 	@echo "⚙️ Applying macOS system defaults..."
-	@chmod +x macos/system-defaults.sh && sudo macos/system-defaults.sh
+	@chmod +x macos/macos-defaults.sh && sudo macos/macos-defaults.sh
 
 oh-my-zsh:
 	@echo "💻 Installing oh-my-zsh..."
@@ -28,7 +28,7 @@ fonts:
 help:
 	@echo "Usage:"
 	@echo "  make install             - Run all bootstrap steps"
-	@echo "  make system-defaults     - Set macOS system defaults"
+	@echo "  make macos-defaults      - Set macOS system defaults"
 	@echo "  make oh-my-zsh           - Install oh-my-zsh"
 	@echo "  make homebrew            - Install Homebrew and packages"
 	@echo "  make python              - Install latest Python version (requires uv)"
