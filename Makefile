@@ -1,4 +1,4 @@
-.PHONY: all install defaults oh-my-zsh homebrew fonts help
+.PHONY: all install system-defaults oh-my-zsh homebrew fonts help
 
 all: install
 
