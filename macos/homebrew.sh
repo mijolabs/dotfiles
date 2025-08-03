@@ -51,5 +51,5 @@ if [[ -f "$BREWFILE_PATH" ]]; then
   brew bundle --file="$BREWFILE_PATH"
   echo "✅ Brew bundle complete."
 else
-  echo "⚠️  No Brewfile found at $BREWFILE_PATH"
+  echo "⚠️ No Brewfile found at $BREWFILE_PATH"
 fi
