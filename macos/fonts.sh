@@ -13,6 +13,7 @@ mkdir -p "$DEST_DIR"
 FONT_FILENAME="TX-02-Regular.ttf"
 INPUT_FILEPATH="fonts/$FONT_FILENAME.age"
 OUTPUT_FILEPATH="$DEST_DIR/$FONT_FILENAME"
+
 echo "🔐 $INPUT_FILEPATH is encrypted"
 age --decrypt "$INPUT_FILEPATH" > "$OUTPUT_FILEPATH"
 echo "✅ Font installed to $OUTPUT_FILEPATH"

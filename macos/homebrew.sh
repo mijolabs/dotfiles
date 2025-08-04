@@ -49,7 +49,7 @@ BREWFILE_PATH="homebrew/Brewfile"
 if [[ -f "$BREWFILE_PATH" ]]; then
   echo "📦 Installing packages from $BREWFILE_PATH..."
   brew bundle --file="$BREWFILE_PATH"
-  echo "✅ Brew bundle complete."
+  echo "✅ Done installing all Homebrew packages and casks."
 else
   echo "⚠️ No Brewfile found at $BREWFILE_PATH"
 fi
