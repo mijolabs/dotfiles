@@ -1,8 +1,19 @@
-.PHONY: all install macos-defaults oh-my-zsh homebrew python fonts help
+.PHONY: all bootstrap macos-defaults oh-my-zsh homebrew python fonts help
 
-all: install
+all: help
 
-install: macos-defaults oh-my-zsh homebrew python fonts
+help:
+	@echo "🛠  Dotfiles Makefile Usage:"
+	@echo ""
+	@echo "  make bootstrap           - Run all installation steps"
+	@echo "  make macos-defaults      - Set macOS system defaults"
+	@echo "  make oh-my-zsh           - Install oh-my-zsh"
+	@echo "  make homebrew            - Install Homebrew and packages"
+	@echo "  make python              - Install latest Python version (requires uv)"
+	@echo "  make fonts               - Install custom fonts (requires age)"
+	@echo ""
+
+bootstrap: macos-defaults oh-my-zsh homebrew python fonts
 	@echo "🚀 macOS system bootstrapped!"
 
 macos-defaults:
@@ -24,12 +35,3 @@ python:
 fonts:
 	@echo "🔤 Installing fonts..."
 	@chmod +x macos/fonts.sh && macos/fonts.sh
-
-help:
-	@echo "Usage:"
-	@echo "  make install             - Run all bootstrap steps"
-	@echo "  make macos-defaults      - Set macOS system defaults"
-	@echo "  make oh-my-zsh           - Install oh-my-zsh"
-	@echo "  make homebrew            - Install Homebrew and packages"
-	@echo "  make python              - Install latest Python version (requires uv)"
-	@echo "  make fonts               - Install custom fonts (requires age)"
