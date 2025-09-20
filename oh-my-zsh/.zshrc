@@ -67,7 +67,7 @@ HYPHEN_INSENSITIVE="true"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git aws docker web-search)
+plugins=(ssh-agent git aws docker web-search)
 
 # Create .zcompdump files in zsh cache dir instead of in $HOME
 export ZSH_COMPDUMP=$ZSH/cache/.zcompdump-$HOST
