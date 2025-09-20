@@ -1,3 +1,5 @@
 # dotfiles-macos
 
-My dotfiles for virgin macOS systems
+My dotfiles installer for virgin macOS systems.
+
+Run `make` to print available tasks.
