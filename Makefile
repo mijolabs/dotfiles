@@ -84,9 +84,8 @@ fonts: ## Decrypt and install fonts
 	else \
  		FONTS_DIR="$$HOME/Library/Fonts"; \
 		mkdir -p "$$FONTS_DIR"; \
- 		for f in fonts/*.age; do \
-			[ -f "$$f" ] || continue
- 			name=$$(basename $$f .age); \
+		find fonts -type f -name '*.age' | while IFS= read -r f; do \
+			name=$$(basename "$$f" .age); \
 			echo "🔐 Decrypting $$name"; \
 			$(BREW_BIN_PATH)/age --decrypt "$$f" > "$$FONTS_DIR/$$name"; \
 		done; \
