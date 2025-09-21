@@ -1,5 +1,3 @@
 alias l='eza -bghlF --git'
 alias ll='eza -abghlF --git'
-alias pip='noglob pip'
-alias pip3='noglob pip3'
 alias unbug-shell='stty sane'
