@@ -78,7 +78,7 @@ python: ## Install Python
 		$(BREW_BIN_PATH)/uv python install --default --preview; \
 	fi
 
-fonts: ## Decrypt and install fonts
+fonts: ## Install fonts
 	if [ ! -x $(BREW_BIN_PATH)/age ]; then \
 		echo "⚠️ 'age' is not installed. Skipping font decryption."; \
 	else \
