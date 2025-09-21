@@ -1,4 +1,5 @@
 tap "homebrew/services"
+
 brew "age"
 brew "cmake"
 brew "coreutils"
@@ -18,6 +19,7 @@ brew "ruff"
 brew "terraform"
 brew "uv"
 brew "xh"
+
 cask "alt-tab"
 cask "coteditor"
 cask "font-fira-code"
