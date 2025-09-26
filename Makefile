@@ -1,7 +1,5 @@
-.PHONY: help all _sudo-upfront macos-config xcode-clt oh-my-zsh homebrew brewfile python fonts
-
+.PHONY: help all _sudo-upfront macos-config oh-my-zsh xcode-clt homebrew brewfile python fonts
 .DEFAULT_GOAL := help
-
 .SILENT:
 
 BREW_BIN_PATH := /opt/homebrew/bin
@@ -12,7 +10,7 @@ help:
 	grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | \
 	awk 'BEGIN {FS = ":.*?## "} {printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2}'
 
-all: _sudo-upfront macos-config xcode-clt oh-my-zsh homebrew brewfile python fonts ## Run all setup tasks 🚀 
+all: _sudo-upfront macos-config oh-my-zsh xcode-clt homebrew brewfile python fonts ## Run all setup tasks 🚀 
 	echo "✅ All installations complete!"
 
 _sudo-upfront:
@@ -27,6 +25,16 @@ macos-config: ## Apply macOS system config
 	echo "⚙️ Applying macOS system config..."
 	chmod +x macos/macos-config.sh && sudo macos/macos-config.sh
 
+oh-my-zsh: ## Install Oh-My-Zsh
+	if [ -d "$$HOME/.oh-my-zsh" ]; then \
+		echo "💻 Oh-My-Zsh is already installed."; \
+	else \
+		echo "💻 Installing Oh-My-Zsh..."; \
+		sh -c "$$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"; \
+		cp oh-my-zsh/custom/*.zsh $$HOME/.oh-my-zsh/custom/; \
+		cat oh-my-zsh/.zprofile >> $$HOME/.zprofile; \
+	fi
+
 xcode-clt: ## Install Xcode Command Line Tools
 	if xcode-select -p >/dev/null; then \
 		echo "🛠 Xcode Command Line Tools are already installed."; \
@@ -39,16 +47,6 @@ xcode-clt: ## Install Xcode Command Line Tools
 			sed -e 's/^\* Label: *//' -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$$//' | tr -d '\n'); \
 		sudo softwareupdate -i "$$PROD" --verbose; \
 		rm /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress; \
-	fi
-
-oh-my-zsh: ## Install Oh-My-Zsh
-	if [ -d "$$HOME/.oh-my-zsh" ]; then \
-		echo "💻 Oh-My-Zsh is already installed."; \
-	else \
-		echo "💻 Installing Oh-My-Zsh..."; \
-		sh -c "$$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"; \
-		cp oh-my-zsh/custom/*.zsh $$HOME/.oh-my-zsh/custom/; \
-		cat oh-my-zsh/.zprofile >> $$HOME/.zprofile; \
 	fi
 
 homebrew: ## Install Homebrew
