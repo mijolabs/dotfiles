@@ -1,17 +1,21 @@
-.PHONY: help all _sudo-upfront macos-config oh-my-zsh xcode-clt homebrew brewfile python fonts
+.PHONY: help all _sudo-upfront macos-config oh-my-zsh xcode-clt homebrew brewfile python fonts aws
 .DEFAULT_GOAL := help
 .SILENT:
 
+PROVISION_DIR := provision
 BREW_BIN_PATH := /opt/homebrew/bin
 
 
 help:
-	echo "Available goals:"
+	echo "\nAvailable goals:\n"
 	grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | \
 	awk 'BEGIN {FS = ":.*?## "} {printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2}'
+	echo "\nGoal descriptions prefixed with '>' are not included in 'make all'."
+	echo
 
-all: _sudo-upfront macos-config oh-my-zsh xcode-clt homebrew brewfile python fonts ## Run all setup tasks 🚀 
+all: _sudo-upfront macos-config oh-my-zsh xcode-clt homebrew brewfile python fonts ## 🚀 Run all base setup tasks
 	echo "✅ All installations complete!"
+
 
 _sudo-upfront:
 	if [ "$$MAKECMDGOALS" != "all" ]; then \
@@ -23,7 +27,8 @@ _sudo-upfront:
 
 macos-config: ## Apply macOS system config
 	echo "⚙️ Applying macOS system config..."
-	chmod +x macos/macos-config.sh && sudo macos/macos-config.sh
+	SCRIPT_FILE="$(PROVISION_DIR)/scripts/macos-config.sh"; \
+	chmod +x $(SCRIPT_FILE) && sudo $(SCRIPT_FILE)
 
 oh-my-zsh: ## Install Oh-My-Zsh
 	if [ -d "$$HOME/.oh-my-zsh" ]; then \
@@ -31,8 +36,9 @@ oh-my-zsh: ## Install Oh-My-Zsh
 	else \
 		echo "💻 Installing Oh-My-Zsh..."; \
 		sh -c "$$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"; \
-		cp oh-my-zsh/custom/*.zsh $$HOME/.oh-my-zsh/custom/; \
-		cat oh-my-zsh/.zprofile >> $$HOME/.zprofile; \
+		if ls $(PROVISION_DIR)/oh-my-zsh/custom/*.zsh >/dev/null 2>&1; then \
+			cp $(PROVISION_DIR)/oh-my-zsh/custom/*.zsh "$$HOME/.oh-my-zsh/custom/"; \
+		fi; \
 	fi
 
 xcode-clt: ## Install Xcode Command Line Tools
@@ -61,11 +67,11 @@ homebrew: ## Install Homebrew
 	fi
 
 brewfile: homebrew ## Install packages listed in Brewfile
-	if [ ! -f homebrew/Brewfile ]; then \
-		echo "⚠️ Brewfile not found. Skipping package installation."; \
+	if [ ! -f $(PROVISION_DIR)/packages/Brewfile.base ]; then \
+		echo "⚠️ Base Brewfile not found. Skipping package installation."; \
 	else \
 		echo "📦 Installing Homebrew packages from Brewfile..."; \
-		$(BREW_BIN_PATH)/brew bundle --file=homebrew/Brewfile; \
+		$(BREW_BIN_PATH)/brew bundle --file=$(PROVISION_DIR)/packages/Brewfile.base; \
 	fi
 
 python: ## Install Python
@@ -82,9 +88,13 @@ fonts: ## Install fonts
 	else \
  		FONTS_DIR="$$HOME/Library/Fonts"; \
 		mkdir -p "$$FONTS_DIR"; \
-		find fonts -type f -name '*.age' | while IFS= read -r f; do \
+		find $(PROVISION_DIR)/fonts -type f -name '*.age' | while IFS= read -r f; do \
 			name=$$(basename "$$f" .age); \
 			echo "🔐 Decrypting $$name"; \
 			$(BREW_BIN_PATH)/age --decrypt "$$f" > "$$FONTS_DIR/$$name"; \
 		done; \
-	fi; \
+	fi
+
+aws: ## > Install AWS development tools
+	echo "📦 Installing AWS-related packages from Brewfile..."; \
+	$(BREW_BIN_PATH)/brew bundle --file=$(PROVISION_DIR)/packages/Brewfile.aws; \
