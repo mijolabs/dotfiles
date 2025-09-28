@@ -1,8 +1,7 @@
 tap "localstack/tap"
 
 brew "awscli"
-brew "awscli-local"
 brew "localstack-cli"
-brew "terraform-local"
+brew "awscli-local"
 
 cask "amazon-q"
