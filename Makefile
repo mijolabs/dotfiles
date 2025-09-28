@@ -8,9 +8,9 @@ BREW_BIN_PATH := /opt/homebrew/bin
 
 help:
 	echo "\nAvailable goals:\n"
-	grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | \
-	awk 'BEGIN {FS = ":.*?## "} {printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2}'
-	echo "\nGoal descriptions prefixed with '>' are not included in 'make all'."
+	grep -E '^[[:space:]]*[a-zA-Z0-9_-]+:.*##' $(MAKEFILE_LIST) | \
+	awk 'BEGIN {FS=":.*##"} {gsub(/^[[:space:]]*/, "", $$1); printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2}'
+	echo "\nGoal descriptions prefixed with '*' are excluded when running 'make all'."
 	echo
 
 all: _sudo-upfront macos-config oh-my-zsh xcode-clt homebrew brewfile python fonts ## 🚀 Run all base setup tasks
@@ -95,6 +95,6 @@ fonts: ## Install fonts
 		done; \
 	fi
 
-aws: ## > Install AWS development tools
+aws: ## * Install AWS development tools
 	echo "📦 Installing AWS-related packages from Brewfile..."; \
 	$(BREW_BIN_PATH)/brew bundle --file=$(PROVISION_DIR)/packages/Brewfile.aws; \
