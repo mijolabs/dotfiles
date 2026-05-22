@@ -1,4 +1,4 @@
-BREW_BIN="$(which brew)"
+BREW_BIN="$(command -v brew)"
 # if [ -f "/opt/homebrew/bin/brew" ]; then
 #     BREW_BIN="/opt/homebrew/bin/brew"
 # fi

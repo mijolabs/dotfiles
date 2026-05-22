@@ -1,7 +1,0 @@
-tap "localstack/tap"
-
-brew "awscli"
-brew "localstack-cli"
-brew "awscli-local"
-
-cask "amazon-q"

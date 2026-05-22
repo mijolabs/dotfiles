@@ -6,6 +6,3 @@ export ZSH_COMPDUMP=$ZSH/cache/.zcompdump-$HOST
 
 # Disable exiting on CTRL-D
 setopt ignore_eof
-
-# Configure ssh-agent plugin to automatically load keys from macOS keychain
-zstyle :omz:plugins:ssh-agent ssh-add-args --apple-load-keychain
