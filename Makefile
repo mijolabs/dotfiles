@@ -130,7 +130,7 @@ claude-code: homebrew ## Install Claude Code and set up config
 		dest="$$CLAUDE_DIR/$$file"; \
 		if [ -L "$$dest" ] && [ "$$(readlink "$$dest")" = "$$src" ]; then \
 			echo "🔗 $$file already linked."; \
-		elif [ -e "$$dest" ]; then \
+		elif [ -L "$$dest" ] || [ -e "$$dest" ]; then \
 			echo "📋 Backing up existing $$file to $$file.backup"; \
 			mv "$$dest" "$$dest.backup"; \
 			ln -s "$$src" "$$dest"; \
