@@ -128,32 +128,38 @@ claude-code: homebrew ## Install and bootstrap Claude Code
 		echo "📦 Claude Code is already installed."; \
 	fi
 	CLAUDE_DIR="$$HOME/.claude"; \
-	REPO_DIR="$$(pwd)/$(BOOTSTRAP_DIR)/claude-code"; \
+	REPO_DIR="$$(pwd)/$(BOOTSTRAP_DIR)/claude-code/symlinks"; \
 	mkdir -p "$$CLAUDE_DIR"; \
-	for file in settings.json CLAUDE.md keybindings.json; do \
-		src="$$REPO_DIR/$$file"; \
-		dest="$$CLAUDE_DIR/$$file"; \
+	for src in "$$REPO_DIR"/*; do \
+		name=$$(basename "$$src"); \
+		dest="$$CLAUDE_DIR/$$name"; \
 		if [ -L "$$dest" ] && [ "$$(readlink "$$dest")" = "$$src" ]; then \
-			echo "🔗 $$file already linked."; \
+			echo "🔗 $$name already linked."; \
 		elif [ -L "$$dest" ] || [ -e "$$dest" ]; then \
-			echo "📋 Backing up existing $$file to $$file.backup"; \
+			echo "📋 Backing up existing $$name to $$name.backup"; \
 			mv "$$dest" "$$dest.backup"; \
 			ln -s "$$src" "$$dest"; \
-			echo "🔗 Linked $$file"; \
+			echo "🔗 Linked $$name"; \
 		else \
 			ln -s "$$src" "$$dest"; \
-			echo "🔗 Linked $$file"; \
+			echo "🔗 Linked $$name"; \
 		fi; \
 	done
 	echo "🔌 Setting up Claude Code plugins..."
-	claude plugin marketplace list 2>/dev/null | grep -q "claude-plugins-official" || \
-		claude plugin marketplace add anthropics/claude-plugins-official --scope user
-	claude plugin marketplace list 2>/dev/null | grep -q "astral-sh" || \
-		claude plugin marketplace add astral-sh/claude-code-plugins --scope user
-	claude plugin list 2>/dev/null | grep -q "gopls-lsp@claude-plugins-official" || \
-		claude plugin install gopls-lsp@claude-plugins-official --scope user
-	claude plugin list 2>/dev/null | grep -q "astral@astral-sh" || \
-		claude plugin install astral@astral-sh --scope user
+	while IFS=' ' read -r type value; do \
+		[ -z "$$type" ] || [ "$${type#\#}" != "$$type" ] && continue; \
+		case "$$type" in \
+			marketplace) \
+				pattern=$$(echo "$$value" | sed 's|.*/||'); \
+				claude plugin marketplace list 2>/dev/null | grep -q "$$pattern" || \
+					claude plugin marketplace add "$$value" --scope user; \
+				;; \
+			plugin) \
+				claude plugin list 2>/dev/null | grep -q "$$value" || \
+					claude plugin install "$$value" --scope user; \
+				;; \
+		esac; \
+	done < $(BOOTSTRAP_DIR)/claude-code/plugins.list
 	echo "✅ Claude Code setup complete."
 
 iterm2: homebrew ## Install iTerm2 and import settings

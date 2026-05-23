@@ -24,7 +24,7 @@ The `Makefile` is the single entry point. All targets are idempotent (they check
 - `zsh/` — shell config: `zshrc.sh`, `zprofile.sh`, and `custom/*.zsh` modules
 - `macos/` — `macos-bootstrap.sh` applies system defaults (runs as root via sudo)
 - `fonts/` — font files encrypted with `age` (passphrase-based); `_encrypt_font.sh` to add new ones
-- `claude-code/` — Claude Code `settings.json`, `keybindings.json`, and user-level `CLAUDE.md`
+- `claude-code/` — Claude Code config; `symlinks/` contains files symlinked into `~/.claude/`, `plugins.list` declares plugin marketplace sources and installs
 - `iterm2/` — iTerm2 plist preferences
 
 ## Key Patterns
@@ -32,6 +32,6 @@ The `Makefile` is the single entry point. All targets are idempotent (they check
 **Symlink-based deployment** — config files are symlinked (not copied) into their target locations, so edits in this repo take effect immediately:
 - `bootstrap/zsh/custom/*.zsh` → `~/.oh-my-zsh/custom/`
 - `bootstrap/zsh/zshrc.sh` is sourced from `~/.zshrc`
-- `bootstrap/claude-code/{settings.json,keybindings.json,CLAUDE.md}` → `~/.claude/`
+- `bootstrap/claude-code/symlinks/*` → `~/.claude/`
 
 **Font encryption** — fonts are stored as `.age` files. Decrypt with `age --decrypt`; encrypt new fonts with `_encrypt_font.sh` (prompts for passphrase).
