@@ -10,7 +10,7 @@ macOS dotfiles and provisioning repo. A single `Makefile` orchestrates bootstrap
 
 - `make` or `make help` — list all available targets
 - `make all` — run full provisioning (prompts for sudo upfront)
-- Individual targets: `make macos-config`, `make omz`, `make xcode-clt`, `make homebrew`, `make brewfile`, `make python`, `make fonts`, `make claude-code`, `make iterm2`
+- Individual targets: `make macos`, `make xcode-clt`, `make homebrew`, `make ohmyzsh`, `make brewfile`, `make python`, `make fonts`, `make claude-code`, `make iterm2`
 
 There are no tests or linters.
 
@@ -22,7 +22,7 @@ The `Makefile` is the single entry point. All targets are idempotent (they check
 
 - `homebrew/` — Brewfile package declarations (`brew bundle`)
 - `zsh/` — shell config: `zshrc.sh`, `zprofile.sh`, and `custom/*.zsh` modules
-- `macos/` — `macos-config.sh` applies system defaults (runs as root via sudo)
+- `macos/` — `macos-bootstrap.sh` applies system defaults (runs as root via sudo)
 - `fonts/` — font files encrypted with `age` (passphrase-based); `_encrypt_font.sh` to add new ones
 - `claude-code/` — Claude Code `settings.json`, `keybindings.json`, and user-level `CLAUDE.md`
 - `iterm2/` — iTerm2 plist preferences

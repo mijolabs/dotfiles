@@ -1,4 +1,4 @@
-.PHONY: help all _sudo-upfront macos-config omz xcode-clt homebrew brewfile python fonts claude-code iterm2
+.PHONY: help all _sudo-upfront macos xcode-clt homebrew ohmyzsh brewfile python fonts claude-code iterm2
 .DEFAULT_GOAL := help
 .SILENT:
 
@@ -15,7 +15,7 @@ help:
 	awk 'BEGIN {FS=":.*##"} {gsub(/^[[:space:]]*/, "", $$1); printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2}'
 	printf "\nGoal descriptions prefixed with '*' are excluded when running 'make all'.\n\n"
 
-all: _sudo-upfront macos-config xcode-clt homebrew omz brewfile python fonts claude-code iterm2 ## 🚀 Run all base setup tasks
+all: _sudo-upfront macos xcode-clt homebrew ohmyzsh brewfile python fonts claude-code iterm2 ## Run all base setup tasks 🚀
 	echo "✅ All installations complete!"
 
 
@@ -28,16 +28,47 @@ _sudo-upfront:
 	sudo -v
 	while true; do sudo -n true; sleep 50; kill -0 "$$$$" || exit; done 2>/dev/null &
 
-macos-config: ## Apply macOS system config
+macos: ## Apply macOS system config
 	echo "⚙️ Applying macOS system config..."
-	chmod +x $(BOOTSTRAP_DIR)/macos/macos-config.sh && sudo $(BOOTSTRAP_DIR)/macos/macos-config.sh
+	chmod +x $(BOOTSTRAP_DIR)/macos/macos-bootstrap.sh && sudo $(BOOTSTRAP_DIR)/macos/macos-bootstrap.sh
 
-omz: xcode-clt ## Install Oh-My-Zsh and configure shell
+xcode-clt: ## Install Xcode Command Line Tools
+	if xcode-select -p >/dev/null 2>&1; then \
+		echo "🛠 Xcode Command Line Tools are already installed."; \
+	else \
+		echo "🛠 Installing Xcode Command Line Tools..."; \
+		touch /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress; \
+		PROD=$$(softwareupdate -l | \
+			grep "\*.*Command Line Tools" | \
+			tail -n 1 | \
+			sed -e 's/^\* Label: *//' -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$$//' | tr -d '\n'); \
+		if [ -z "$$PROD" ]; then \
+			echo "❌ Could not find Command Line Tools package in softwareupdate catalog."; \
+			rm /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress; \
+			exit 1; \
+		fi; \
+		sudo softwareupdate -i "$$PROD" --verbose; \
+		rm /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress; \
+	fi
+
+homebrew: xcode-clt ## Install Homebrew
+	if [ -x $(BREW_BIN_PATH)/brew ]; then \
+		echo "🍺 Homebrew is already installed."; \
+	else \
+		echo "🍺 Installing Homebrew..."; \
+		sudo mkdir -p /opt/homebrew; \
+		sudo chown -R $$(whoami):admin /opt/homebrew; \
+		NONINTERACTIVE=1 /bin/bash -c "$$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"; \
+		grep -q 'brew shellenv' "$$HOME/.zprofile" 2>/dev/null || \
+			echo 'eval "$$($(BREW_BIN_PATH)/brew shellenv)"' >> "$$HOME/.zprofile"; \
+	fi
+
+ohmyzsh: xcode-clt ## Install ohmyzsh and configure shell
 	if [ ! -d "$$HOME/.oh-my-zsh" ]; then \
-		echo "💻 Installing Oh-My-Zsh..."; \
+		echo "💻 Installing ohmyzsh..."; \
 		RUNZSH=no CHSH=no sh -c "$$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"; \
 	else \
-		echo "💻 Oh-My-Zsh is already installed."; \
+		echo "💻 ohmyzsh is already installed."; \
 	fi
 	echo "🔗 Linking custom zsh files..."
 	for f in $$(pwd)/$(BOOTSTRAP_DIR)/zsh/custom/*.zsh; do \
@@ -60,32 +91,6 @@ omz: xcode-clt ## Install Oh-My-Zsh and configure shell
 	fi
 	echo "✅ Shell configured."
 
-xcode-clt: ## Install Xcode Command Line Tools
-	if xcode-select -p >/dev/null 2>&1; then \
-		echo "🛠 Xcode Command Line Tools are already installed."; \
-	else \
-		echo "🛠 Installing Xcode Command Line Tools..."; \
-		touch /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress; \
-		PROD=$$(softwareupdate -l | \
-			grep "\*.*Command Line Tools" | \
-			tail -n 1 | \
-			sed -e 's/^\* Label: *//' -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$$//' | tr -d '\n'); \
-		sudo softwareupdate -i "$$PROD" --verbose; \
-		rm /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress; \
-	fi
-
-homebrew: ## Install Homebrew
-	if [ -x $(BREW_BIN_PATH)/brew ]; then \
-		echo "🍺 Homebrew is already installed."; \
-	else \
-		echo "🍺 Installing Homebrew..."; \
-		sudo mkdir -p /opt/homebrew; \
-		sudo chown -R $$(whoami):admin /opt/homebrew; \
-		NONINTERACTIVE=1 /bin/bash -c "$$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"; \
-		grep -q 'brew shellenv' "$$HOME/.zprofile" 2>/dev/null || \
-			echo 'eval "$$($(BREW_BIN_PATH)/brew shellenv)"' >> "$$HOME/.zprofile"; \
-	fi
-
 brewfile: homebrew ## Install packages listed in Brewfile
 	if [ ! -f $(BOOTSTRAP_DIR)/homebrew/Brewfile.base ]; then \
 		echo "⚠️ Base Brewfile not found. Skipping package installation."; \
@@ -94,7 +99,7 @@ brewfile: homebrew ## Install packages listed in Brewfile
 		$(BREW_BIN_PATH)/brew bundle --file=$(BOOTSTRAP_DIR)/homebrew/Brewfile.base; \
 	fi
 
-python: homebrew ## Install Python
+python: homebrew ## Install Python via uv
 	if [ ! -x $(BREW_BIN_PATH)/uv ]; then \
 		echo "📦 Installing uv..."; \
 		$(BREW_BIN_PATH)/brew install uv; \
@@ -115,7 +120,7 @@ fonts: homebrew ## Install fonts
 		$(BREW_BIN_PATH)/age --decrypt "$$f" > "$$FONTS_DIR/$$name"; \
 	done
 
-claude-code: homebrew ## Install Claude Code and set up config
+claude-code: homebrew ## Install and bootstrap Claude Code
 	if ! $(BREW_BIN_PATH)/brew list --cask claude-code >/dev/null 2>&1; then \
 		echo "📦 Installing Claude Code..."; \
 		$(BREW_BIN_PATH)/brew install --cask claude-code; \
