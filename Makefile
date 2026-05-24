@@ -75,10 +75,10 @@ ohmyzsh: xcode-clt ## Install ohmyzsh and configure shell
 		name=$$(basename "$$f"); \
 		dest="$$HOME/.oh-my-zsh/custom/$$name"; \
 		if [ -L "$$dest" ] && [ "$$(readlink "$$dest")" = "$$f" ]; then \
-			echo "  $$name already linked."; \
+			echo "🔗 $$name already linked."; \
 		else \
 			ln -sf "$$f" "$$dest"; \
-			echo "  Linked $$name"; \
+			echo "🔗 Linked $$name"; \
 		fi; \
 	done
 	ZSHRC_SOURCE="source $$(pwd)/$(BOOTSTRAP_DIR)/zsh/zshrc.sh"; \
