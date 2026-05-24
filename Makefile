@@ -75,19 +75,27 @@ omz: xcode-clt ## Install oh-my-zsh and configure shell
 		name=$$(basename "$$f"); \
 		dest="$$HOME/.oh-my-zsh/custom/$$name"; \
 		if [ -L "$$dest" ] && [ "$$(readlink "$$dest")" = "$$f" ]; then \
-			echo "🔗 $$name already linked."; \
+			echo "  🔗 $$name already linked."; \
 		else \
 			ln -sf "$$f" "$$dest"; \
-			echo "🔗 Linked $$name"; \
+			echo "  🔗 Linked $$name"; \
 		fi; \
 	done
 	ZSHRC_SOURCE="source $$(pwd)/$(BOOTSTRAP_DIR)/omz/zshrc.sh"; \
-	if ! grep -qF "$$ZSHRC_SOURCE" "$$HOME/.zshrc" 2>/dev/null; then \
-		echo "$$ZSHRC_SOURCE" > "$$HOME/.zshrc"; \
+	if grep -qF "$$ZSHRC_SOURCE" "$$HOME/.zshrc" 2>/dev/null; then \
+		echo "  🔗 .zshrc already linked."; \
+	else \
+		sed -i '' '\|source .*/$(BOOTSTRAP_DIR)/.*/zshrc\.sh|d' "$$HOME/.zshrc" 2>/dev/null || true; \
+		echo "$$ZSHRC_SOURCE" >> "$$HOME/.zshrc"; \
+		echo "  🔗 Linked .zshrc"; \
 	fi
 	ZPROFILE_SOURCE="source $$(pwd)/$(BOOTSTRAP_DIR)/omz/zprofile.sh"; \
-	if ! grep -qF "$$ZPROFILE_SOURCE" "$$HOME/.zprofile" 2>/dev/null; then \
+	if grep -qF "$$ZPROFILE_SOURCE" "$$HOME/.zprofile" 2>/dev/null; then \
+		echo "  🔗 .zprofile already linked."; \
+	else \
+		sed -i '' '\|source .*/$(BOOTSTRAP_DIR)/.*/zprofile\.sh|d' "$$HOME/.zprofile" 2>/dev/null || true; \
 		echo "$$ZPROFILE_SOURCE" >> "$$HOME/.zprofile"; \
+		echo "  🔗 Linked .zprofile"; \
 	fi
 	echo "✅ Shell configured."
 
@@ -116,7 +124,7 @@ fonts: homebrew ## Install fonts
 	mkdir -p "$$FONTS_DIR"; \
 	find $(BOOTSTRAP_DIR)/fonts -type f -name '*.age' | while IFS= read -r f; do \
 		name=$$(basename "$$f" .age); \
-		echo "🔐 Decrypting $$name"; \
+		echo "  🔐 Decrypting $$name"; \
 		$(BREW_BIN_PATH)/age --decrypt "$$f" > "$$FONTS_DIR/$$name"; \
 	done
 
@@ -127,6 +135,7 @@ claude-code: homebrew ## Install and bootstrap Claude Code
 	else \
 		echo "📦 Claude Code is already installed."; \
 	fi
+	echo "🔗 Linking Claude Code config files..."
 	CLAUDE_DIR="$$HOME/.claude"; \
 	REPO_DIR="$$(pwd)/$(BOOTSTRAP_DIR)/claude-code/symlinks"; \
 	mkdir -p "$$CLAUDE_DIR"; \
@@ -134,15 +143,15 @@ claude-code: homebrew ## Install and bootstrap Claude Code
 		name=$$(basename "$$src"); \
 		dest="$$CLAUDE_DIR/$$name"; \
 		if [ -L "$$dest" ] && [ "$$(readlink "$$dest")" = "$$src" ]; then \
-			echo "🔗 $$name already linked."; \
+			echo "  🔗 $$name already linked."; \
 		elif [ -L "$$dest" ] || [ -e "$$dest" ]; then \
-			echo "📋 Backing up existing $$name to $$name.backup"; \
+			echo "  📋 Backing up existing $$name to $$name.backup"; \
 			mv "$$dest" "$$dest.backup"; \
 			ln -s "$$src" "$$dest"; \
-			echo "🔗 Linked $$name"; \
+			echo "  🔗 Linked $$name"; \
 		else \
 			ln -s "$$src" "$$dest"; \
-			echo "🔗 Linked $$name"; \
+			echo "  🔗 Linked $$name"; \
 		fi; \
 	done
 	echo "🔌 Setting up Claude Code plugins..."
@@ -151,12 +160,20 @@ claude-code: homebrew ## Install and bootstrap Claude Code
 		case "$$type" in \
 			marketplace) \
 				pattern=$$(echo "$$value" | sed 's|.*/||'); \
-				claude plugin marketplace list 2>/dev/null | grep -q "$$pattern" || \
+				if claude plugin marketplace list 2>/dev/null | grep -q "$$pattern"; then \
+					echo "  🔌 $$pattern already installed."; \
+				else \
+					echo "  🔌 Installing $$pattern"; \
 					claude plugin marketplace add "$$value" --scope user; \
+				fi; \
 				;; \
 			plugin) \
-				claude plugin list 2>/dev/null | grep -q "$$value" || \
+				if claude plugin list 2>/dev/null | grep -q "$$value"; then \
+					echo "  🔌 $$value already installed."; \
+				else \
+					echo "  🔌 Installing $$value"; \
 					claude plugin install "$$value" --scope user; \
+				fi; \
 				;; \
 		esac; \
 	done < $(BOOTSTRAP_DIR)/claude-code/plugins.list
