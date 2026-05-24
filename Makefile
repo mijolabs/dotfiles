@@ -82,18 +82,18 @@ omz: xcode-clt ## Install oh-my-zsh and configure shell
 		fi; \
 	done
 	ZSHRC_SOURCE="source $$(pwd)/$(BOOTSTRAP_DIR)/omz/zshrc.sh"; \
+	sed -i '' '\|source .*/$(BOOTSTRAP_DIR)/.*/zshrc\.sh|d' "$$HOME/.zshrc" 2>/dev/null || true; \
 	if grep -qF "$$ZSHRC_SOURCE" "$$HOME/.zshrc" 2>/dev/null; then \
 		echo "  🔗 .zshrc already linked."; \
 	else \
-		sed -i '' '\|source .*/$(BOOTSTRAP_DIR)/.*/zshrc\.sh|d' "$$HOME/.zshrc" 2>/dev/null || true; \
 		echo "$$ZSHRC_SOURCE" >> "$$HOME/.zshrc"; \
 		echo "  🔗 Linked .zshrc"; \
 	fi
 	ZPROFILE_SOURCE="source $$(pwd)/$(BOOTSTRAP_DIR)/omz/zprofile.sh"; \
+	sed -i '' '\|source .*/$(BOOTSTRAP_DIR)/.*/zprofile\.sh|d' "$$HOME/.zprofile" 2>/dev/null || true; \
 	if grep -qF "$$ZPROFILE_SOURCE" "$$HOME/.zprofile" 2>/dev/null; then \
 		echo "  🔗 .zprofile already linked."; \
 	else \
-		sed -i '' '\|source .*/$(BOOTSTRAP_DIR)/.*/zprofile\.sh|d' "$$HOME/.zprofile" 2>/dev/null || true; \
 		echo "$$ZPROFILE_SOURCE" >> "$$HOME/.zprofile"; \
 		echo "  🔗 Linked .zprofile"; \
 	fi
