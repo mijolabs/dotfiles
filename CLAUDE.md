@@ -10,7 +10,7 @@ macOS dotfiles and provisioning repo. A single `Makefile` orchestrates bootstrap
 
 - `make` or `make help` — list all available targets
 - `make all` — run full provisioning (prompts for sudo upfront)
-- Individual targets: `make macos`, `make xcode-clt`, `make homebrew`, `make ohmyzsh`, `make brewfile`, `make python`, `make fonts`, `make claude-code`, `make iterm2`
+- Individual targets: `make macos`, `make xcode-clt`, `make homebrew`, `make omz`, `make brewfile`, `make python`, `make fonts`, `make claude-code`, `make iterm2`
 
 There are no tests or linters.
 
@@ -21,7 +21,7 @@ The `Makefile` is the single entry point. All targets are idempotent (they check
 `bootstrap/` contains config files and scripts organized by concern:
 
 - `homebrew/` — Brewfile package declarations (`brew bundle`)
-- `zsh/` — shell config: `zshrc.sh`, `zprofile.sh`, and `custom/*.zsh` modules
+- `omz/` — shell config: `zshrc.sh`, `zprofile.sh`, and `custom/*.zsh` modules
 - `macos/` — `macos-bootstrap.sh` applies system defaults (runs as root via sudo)
 - `fonts/` — font files encrypted with `age` (passphrase-based); `_encrypt_font.sh` to add new ones
 - `claude-code/` — Claude Code config; `symlinks/` contains files symlinked into `~/.claude/`, `plugins.list` declares plugin marketplace sources and installs
@@ -30,8 +30,8 @@ The `Makefile` is the single entry point. All targets are idempotent (they check
 ## Key Patterns
 
 **Symlink-based deployment** — config files are symlinked (not copied) into their target locations, so edits in this repo take effect immediately:
-- `bootstrap/zsh/custom/*.zsh` → `~/.oh-my-zsh/custom/`
-- `bootstrap/zsh/zshrc.sh` is sourced from `~/.zshrc`
+- `bootstrap/omz/custom/*.zsh` → `~/.oh-my-zsh/custom/`
+- `bootstrap/omz/zshrc.sh` is sourced from `~/.zshrc`
 - `bootstrap/claude-code/symlinks/*` → `~/.claude/`
 
 **Font encryption** — fonts are stored as `.age` files. Decrypt with `age --decrypt`; encrypt new fonts with `_encrypt_font.sh` (prompts for passphrase).

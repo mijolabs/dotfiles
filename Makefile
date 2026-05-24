@@ -1,4 +1,4 @@
-.PHONY: help all _sudo-upfront macos xcode-clt homebrew ohmyzsh brewfile python fonts claude-code iterm2
+.PHONY: help all _sudo-upfront macos xcode-clt homebrew omz brewfile python fonts claude-code iterm2
 .DEFAULT_GOAL := help
 .SILENT:
 
@@ -15,7 +15,7 @@ help:
 	awk 'BEGIN {FS=":.*##"} {gsub(/^[[:space:]]*/, "", $$1); printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2}'
 	printf "\nGoal descriptions prefixed with '*' are excluded when running 'make all'.\n\n"
 
-all: _sudo-upfront macos xcode-clt homebrew ohmyzsh brewfile python fonts claude-code iterm2 ## Run all base setup tasks 🚀
+all: _sudo-upfront macos xcode-clt homebrew omz brewfile python fonts claude-code iterm2 ## Run all base setup tasks 🚀
 	echo "✅ All installations complete!"
 
 
@@ -63,15 +63,15 @@ homebrew: xcode-clt ## Install Homebrew
 			echo 'eval "$$($(BREW_BIN_PATH)/brew shellenv)"' >> "$$HOME/.zprofile"; \
 	fi
 
-ohmyzsh: xcode-clt ## Install ohmyzsh and configure shell
+omz: xcode-clt ## Install oh-my-zsh and configure shell
 	if [ ! -d "$$HOME/.oh-my-zsh" ]; then \
-		echo "💻 Installing ohmyzsh..."; \
+		echo "💻 Installing oh-my-zsh..."; \
 		RUNZSH=no CHSH=no sh -c "$$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"; \
 	else \
-		echo "💻 ohmyzsh is already installed."; \
+		echo "💻 oh-my-zsh is already installed."; \
 	fi
 	echo "🔗 Linking custom zsh files..."
-	for f in $$(pwd)/$(BOOTSTRAP_DIR)/zsh/custom/*.zsh; do \
+	for f in $$(pwd)/$(BOOTSTRAP_DIR)/omz/custom/*.zsh; do \
 		name=$$(basename "$$f"); \
 		dest="$$HOME/.oh-my-zsh/custom/$$name"; \
 		if [ -L "$$dest" ] && [ "$$(readlink "$$dest")" = "$$f" ]; then \
@@ -81,11 +81,11 @@ ohmyzsh: xcode-clt ## Install ohmyzsh and configure shell
 			echo "🔗 Linked $$name"; \
 		fi; \
 	done
-	ZSHRC_SOURCE="source $$(pwd)/$(BOOTSTRAP_DIR)/zsh/zshrc.sh"; \
+	ZSHRC_SOURCE="source $$(pwd)/$(BOOTSTRAP_DIR)/omz/zshrc.sh"; \
 	if ! grep -qF "$$ZSHRC_SOURCE" "$$HOME/.zshrc" 2>/dev/null; then \
 		echo "$$ZSHRC_SOURCE" > "$$HOME/.zshrc"; \
 	fi
-	ZPROFILE_SOURCE="source $$(pwd)/$(BOOTSTRAP_DIR)/zsh/zprofile.sh"; \
+	ZPROFILE_SOURCE="source $$(pwd)/$(BOOTSTRAP_DIR)/omz/zprofile.sh"; \
 	if ! grep -qF "$$ZPROFILE_SOURCE" "$$HOME/.zprofile" 2>/dev/null; then \
 		echo "$$ZPROFILE_SOURCE" >> "$$HOME/.zprofile"; \
 	fi
