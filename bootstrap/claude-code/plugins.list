@@ -1,5 +1,0 @@
-marketplace anthropics/claude-plugins-official
-plugin gopls-lsp@claude-plugins-official
-
-marketplace astral-sh/claude-code-plugins
-plugin astral@astral-sh

@@ -157,28 +157,25 @@ claude-code: homebrew ## Install and bootstrap Claude Code
 		fi; \
 	done
 	echo "🔌 Setting up Claude Code plugins..."
-	while IFS=' ' read -r type value; do \
-		[ -z "$$type" ] || [ "$${type#\#}" != "$$type" ] && continue; \
-		case "$$type" in \
-			marketplace) \
-				pattern=$$(echo "$$value" | sed 's|.*/||'); \
-				if claude plugin marketplace list 2>/dev/null | grep -q "$$pattern"; then \
-					echo "  🔌 $$pattern already installed."; \
-				else \
-					echo "  🔌 Installing $$pattern"; \
-					claude plugin marketplace add "$$value" --scope user; \
-				fi; \
-				;; \
-			plugin) \
-				if claude plugin list 2>/dev/null | grep -q "$$value"; then \
-					echo "  🔌 $$value already installed."; \
-				else \
-					echo "  🔌 Installing $$value"; \
-					claude plugin install "$$value" --scope user; \
-				fi; \
-				;; \
-		esac; \
-	done < $(BOOTSTRAP_DIR)/claude-code/plugins.list
+	SETTINGS="$$(pwd)/$(BOOTSTRAP_DIR)/claude-code/symlinks/settings.json"; \
+	for entry in $$(jq -r '.extraKnownMarketplaces // {} | to_entries[] | "\(.key)=\(.value.source.repo)"' "$$SETTINGS"); do \
+		name="$${entry%%=*}"; \
+		repo="$${entry#*=}"; \
+		if claude plugin marketplace list 2>/dev/null | grep -q "$$name"; then \
+			echo "  🔌 $$name marketplace already registered."; \
+		else \
+			echo "  🔌 Registering $$name marketplace"; \
+			claude plugin marketplace add "$$repo" --scope user; \
+		fi; \
+	done; \
+	for plugin in $$(jq -r '.enabledPlugins // {} | keys[]' "$$SETTINGS"); do \
+		if claude plugin list 2>/dev/null | grep -q "$$plugin"; then \
+			echo "  🔌 $$plugin already installed."; \
+		else \
+			echo "  🔌 Installing $$plugin"; \
+			claude plugin install "$$plugin" --scope user; \
+		fi; \
+	done
 	echo "✅ Claude Code setup complete."
 
 iterm2: homebrew ## Install iTerm2 and import settings

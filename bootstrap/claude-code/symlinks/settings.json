@@ -11,7 +11,8 @@
   "enabledPlugins": {
     "gopls-lsp@claude-plugins-official": true,
     "astral@astral-sh": true,
-    "andrej-karpathy-skills@karpathy-skills": true
+    "andrej-karpathy-skills@karpathy-skills": true,
+    "pydantic-ai@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "karpathy-skills": {
