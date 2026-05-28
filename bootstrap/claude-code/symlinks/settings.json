@@ -1,6 +1,13 @@
 {
   "permissions": {
-    "defaultMode": "plan"
+    "defaultMode": "plan",
+    "deny": [
+      "Read(.env)",
+      "Read(.env.*)",
+      "Read(*.pem)",
+      "Read(*.key)",
+      "Read(~/.ssh/**)"
+    ]
   },
   "model": "claude-opus-4-6",
   "statusLine": {
