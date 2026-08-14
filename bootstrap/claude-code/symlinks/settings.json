@@ -16,19 +16,10 @@
     "padding": 0
   },
   "enabledPlugins": {
-    "gopls-lsp@claude-plugins-official": true,
+    "gopls-lsp@claude-plugins-official": false,
     "astral@astral-sh": true,
-    "andrej-karpathy-skills@karpathy-skills": true,
     "pydantic-ai@claude-plugins-official": true,
     "frontend-design@claude-plugins-official": true
-  },
-  "extraKnownMarketplaces": {
-    "karpathy-skills": {
-      "source": {
-        "source": "github",
-        "repo": "forrestchang/andrej-karpathy-skills"
-      }
-    }
   },
   "tui": "fullscreen"
 }
