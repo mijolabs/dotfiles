@@ -24,7 +24,7 @@ The `Makefile` is the single entry point. All targets are idempotent (they check
 - `omz/` — shell config: `zshrc.sh`, `zprofile.sh`, and `custom/*.zsh` modules
 - `macos/` — `macos-bootstrap.sh` applies system defaults (runs as root via sudo)
 - `fonts/` — font files encrypted with `age` (passphrase-based); `_encrypt_font.sh` to add new ones
-- `claude-code/` — Claude Code config; `symlinks/` contains files symlinked into `~/.claude/`, `plugins.list` declares plugin marketplace sources and installs
+- `claude-code/` — Claude Code config; `symlinks/` contains files symlinked into `~/.claude/`, plugin marketplace sources and installs are declared in `settings.json`
 - `iterm2/` — iTerm2 plist preferences
 
 ## Key Patterns

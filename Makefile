@@ -15,7 +15,7 @@ help:
 	awk 'BEGIN {FS=":.*##"} {gsub(/^[[:space:]]*/, "", $$1); printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2}'
 	printf "\nGoal descriptions prefixed with '*' are excluded when running 'make all'.\n\n"
 
-all: _sudo-upfront macos xcode-clt homebrew omz brewfile python fonts claude-code iterm2 ## Run all base setup tasks 🚀
+all: _sudo-upfront macos xcode-clt homebrew omz brewfile python claude-code iterm2 ## Run all base setup tasks 🚀
 	echo "✅ All installations complete!"
 
 
@@ -26,7 +26,7 @@ _sudo-upfront:
 	fi
 	echo "🔑 Requesting sudo upfront..."
 	sudo -v
-	while true; do sudo -n true; sleep 50; kill -0 "$$$$" || exit; done 2>/dev/null &
+	while true; do sudo -n true; sleep 50; kill -0 "$$PPID" || exit; done 2>/dev/null &
 
 macos: ## Apply macOS system config
 	echo "⚙️ Applying macOS system config..."
@@ -82,7 +82,7 @@ omz: xcode-clt ## Install oh-my-zsh and configure shell
 		fi; \
 	done
 	ZSHRC_SOURCE="source $$(pwd)/$(BOOTSTRAP_DIR)/omz/zshrc.sh"; \
-	sed -i.bak '\|source .*/$(BOOTSTRAP_DIR)/.*/zshrc\.sh|d' "$$HOME/.zshrc" 2>/dev/null; \
+	sed -i.bak '\|source .*/$(BOOTSTRAP_DIR)/.*/zshrc\.sh|d' "$$HOME/.zshrc" 2>/dev/null || true; \
 	rm -f "$$HOME/.zshrc.bak"; \
 	if grep -qF "$$ZSHRC_SOURCE" "$$HOME/.zshrc" 2>/dev/null; then \
 		echo "  🔗 .zshrc already linked."; \
@@ -91,7 +91,7 @@ omz: xcode-clt ## Install oh-my-zsh and configure shell
 		echo "  🔗 Linked .zshrc"; \
 	fi
 	ZPROFILE_SOURCE="source $$(pwd)/$(BOOTSTRAP_DIR)/omz/zprofile.sh"; \
-	sed -i.bak '\|source .*/$(BOOTSTRAP_DIR)/.*/zprofile\.sh|d' "$$HOME/.zprofile" 2>/dev/null; \
+	sed -i.bak '\|source .*/$(BOOTSTRAP_DIR)/.*/zprofile\.sh|d' "$$HOME/.zprofile" 2>/dev/null || true; \
 	rm -f "$$HOME/.zprofile.bak"; \
 	if grep -qF "$$ZPROFILE_SOURCE" "$$HOME/.zprofile" 2>/dev/null; then \
 		echo "  🔗 .zprofile already linked."; \
@@ -106,7 +106,7 @@ brewfile: homebrew ## Install packages listed in Brewfile
 		echo "⚠️ Base Brewfile not found. Skipping package installation."; \
 	else \
 		echo "📦 Installing Homebrew packages from Brewfile..."; \
-		$(BREW_BIN_PATH)/brew bundle --file=$(BOOTSTRAP_DIR)/homebrew/Brewfile.base; \
+		$(BREW_BIN_PATH)/brew bundle --no-lock --file=$(BOOTSTRAP_DIR)/homebrew/Brewfile.base; \
 	fi
 
 python: homebrew ## Install Python via uv
@@ -117,7 +117,7 @@ python: homebrew ## Install Python via uv
 	echo "🐍 Installing Python with uv..."
 	$(BREW_BIN_PATH)/uv python install --default --preview
 
-fonts: homebrew ## Install fonts
+fonts: homebrew ## *Install fonts (interactive — requires passphrase)
 	if [ ! -x $(BREW_BIN_PATH)/age ]; then \
 		echo "📦 Installing age..."; \
 		$(BREW_BIN_PATH)/brew install age; \
@@ -126,8 +126,12 @@ fonts: homebrew ## Install fonts
 	mkdir -p "$$FONTS_DIR"; \
 	find $(BOOTSTRAP_DIR)/fonts -type f -name '*.age' | while IFS= read -r f; do \
 		name=$$(basename "$$f" .age); \
-		echo "  🔐 Decrypting $$name"; \
-		$(BREW_BIN_PATH)/age --decrypt "$$f" > "$$FONTS_DIR/$$name"; \
+		if [ -f "$$FONTS_DIR/$$name" ]; then \
+			echo "  ✅ $$name already installed."; \
+		else \
+			echo "  🔐 Decrypting $$name"; \
+			$(BREW_BIN_PATH)/age --decrypt "$$f" > "$$FONTS_DIR/$$name"; \
+		fi; \
 	done
 
 claude-code: homebrew ## Install and bootstrap Claude Code
