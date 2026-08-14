@@ -1,13 +1,13 @@
 {
   "permissions": {
-    "defaultMode": "plan",
     "deny": [
       "Read(.env)",
       "Read(.env.*)",
       "Read(*.pem)",
       "Read(*.key)",
       "Read(~/.ssh/**)"
-    ]
+    ],
+    "defaultMode": "plan"
   },
   "model": "claude-opus-4-6",
   "statusLine": {
@@ -19,7 +19,8 @@
     "gopls-lsp@claude-plugins-official": true,
     "astral@astral-sh": true,
     "andrej-karpathy-skills@karpathy-skills": true,
-    "pydantic-ai@claude-plugins-official": true
+    "pydantic-ai@claude-plugins-official": true,
+    "frontend-design@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "karpathy-skills": {
@@ -28,5 +29,6 @@
         "repo": "forrestchang/andrej-karpathy-skills"
       }
     }
-  }
+  },
+  "tui": "fullscreen"
 }
