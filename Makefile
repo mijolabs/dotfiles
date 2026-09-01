@@ -1,4 +1,4 @@
-.PHONY: help all _sudo-upfront macos xcode-clt homebrew omz brewfile python fonts claude-code iterm2
+.PHONY: help all _sudo-upfront macos xcode-clt homebrew omz brewfile python fonts claude-code ghostty iterm2
 .DEFAULT_GOAL := help
 .SILENT:
 
@@ -15,7 +15,7 @@ help:
 	awk 'BEGIN {FS=":.*##"} {gsub(/^[[:space:]]*/, "", $$1); printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2}'
 	printf "\nGoal descriptions prefixed with '*' are excluded when running 'make all'.\n\n"
 
-all: _sudo-upfront macos xcode-clt homebrew omz brewfile python claude-code iterm2 ## Run all base setup tasks 🚀
+all: _sudo-upfront macos xcode-clt homebrew omz brewfile python claude-code ghostty ## Run all base setup tasks 🚀
 	echo "✅ All installations complete!"
 
 
@@ -185,7 +185,35 @@ claude-code: homebrew ## Install and bootstrap Claude Code
 	done
 	echo "✅ Claude Code setup complete."
 
-iterm2: homebrew ## Install iTerm2 and import settings
+ghostty: homebrew ## Install Ghostty and symlink config
+	if ! $(BREW_BIN_PATH)/brew list --cask ghostty >/dev/null 2>&1; then \
+		echo "👻 Installing Ghostty..."; \
+		$(BREW_BIN_PATH)/brew install --cask ghostty; \
+	else \
+		echo "👻 Ghostty is already installed."; \
+	fi
+	echo "🔗 Linking Ghostty config..."
+	GHOSTTY_DIR="$$HOME/Library/Application Support/com.mitchellh.ghostty"; \
+	REPO_DIR="$$(pwd)/$(BOOTSTRAP_DIR)/ghostty"; \
+	mkdir -p "$$GHOSTTY_DIR"; \
+	for src in "$$REPO_DIR"/config.ghostty "$$REPO_DIR"/shaders; do \
+		name=$$(basename "$$src"); \
+		dest="$$GHOSTTY_DIR/$$name"; \
+		if [ -L "$$dest" ] && [ "$$(readlink "$$dest")" = "$$src" ]; then \
+			echo "  🔗 $$name already linked."; \
+		elif [ -L "$$dest" ] || [ -e "$$dest" ]; then \
+			echo "  📋 Backing up existing $$name to $$name.backup"; \
+			mv "$$dest" "$$dest.backup"; \
+			ln -s "$$src" "$$dest"; \
+			echo "  🔗 Linked $$name"; \
+		else \
+			ln -s "$$src" "$$dest"; \
+			echo "  🔗 Linked $$name"; \
+		fi; \
+	done
+	echo "✅ Ghostty setup complete."
+
+iterm2: homebrew ## *Install iTerm2 and import settings
 	if ! $(BREW_BIN_PATH)/brew list --cask iterm2 >/dev/null 2>&1; then \
 		echo "📦 Installing iTerm2..."; \
 		$(BREW_BIN_PATH)/brew install --cask iterm2; \
