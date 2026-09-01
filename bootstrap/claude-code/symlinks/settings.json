@@ -7,7 +7,7 @@
       "Read(*.key)",
       "Read(~/.ssh/**)"
     ],
-    "defaultMode": "plan"
+    "defaultMode": "auto"
   },
   "model": "claude-opus-4-6",
   "statusLine": {
@@ -16,10 +16,54 @@
     "padding": 0
   },
   "enabledPlugins": {
-    "gopls-lsp@claude-plugins-official": false,
+    "gopls-lsp@claude-plugins-official": true,
     "astral@astral-sh": true,
     "pydantic-ai@claude-plugins-official": true,
     "frontend-design@claude-plugins-official": true
   },
-  "tui": "fullscreen"
+  "tui": "fullscreen",
+  "theme": "dark",
+  "attribution": {
+    "sessionUrl": false
+  },
+  "autoMode": {
+    "environment": [
+      "### Org-wide",
+      "**Organization**: Odevo (org: odevo-dev on GitHub)",
+      "**Cloud provider(s)**: Azure (primary), AWS (secondary — Bedrock IAM, Terraform state)",
+      "**Repository visibility**: private (confirmed via gh API)",
+      "**Internal sharing / snippet hosting**: None configured — treat public paste/gist services as outside the trust boundary",
+      "**Secrets management**: CI secrets (TEAM_AI_DEPLOY_PROCESSOR_PRIVATE_KEY, TEAM_AI_DEPLOY_WRITER_PRIVATE_KEY); local `.env` and `*-secrets.env` files gitignored; `local/nerp-integration-service/secrets/` for database secrets",
+      "**Default / protected branches**: `main` (protected); rulesets active: \"default needs reviewed PR for non team\", \"default no force push or delete\"",
+      "**CI/CD deploy targets**: GitOps via minidep on Azure VMs (vm1–vm8 EU, us01–us05 US); GitHub Actions validates YAML/docker-compose on merge to main",
+      "**Network posture**: Services behind Caddy reverse-proxy on each VM; domains under *.odevo.ai (chat.odevo.ai, prod.des.odevo.ai, staging.des.odevo.ai, dev.des.odevo.ai, grafana.odevo.ai, ai-deploy-status.odevo.ai, and US variants)",
+      "**Source control**: odevo-dev/ai-deploy on GitHub (private) — the only configured remote",
+      "**Trusted internal domains**: *.odevo.ai (chat.odevo.ai, chat-us.odevo.ai, gpt-eu.odevo.ai, gpt-us.odevo.ai, prod.des.odevo.ai, prod.des-us.odevo.ai, staging.des.odevo.ai, staging.des-us.odevo.ai, dev.des.odevo.ai, ai-deploy-status.odevo.ai, grafana.odevo.ai, grafana-us.odevo.ai)",
+      "**Trusted cloud buckets**: None configured",
+      "**Key internal services**: OdevoGPT, DES (Document Extraction Service), minidep (GitOps deployer), Grafana/Prometheus monitoring, Caddy ingress",
+      "**Internal package registry**: None configured",
+      "**Sensitive data locations & audiences**: `local/**/.env`, `local/**/secrets/`, `*-secrets.env`, `*_secrets.env` files — hold service credentials and connection strings; `infra/terraform/` — IaC definitions for Azure VMs, networking, cognitive services, and AWS Bedrock IAM; share only with audiences cleared at the named+specifics bar",
+      "**Data retention / declassification**: None configured",
+      "**Sensitive remote targets**: any namespace, host, or container whose name carries `prod` or `production` as a whole word or name segment; also prod.des.odevo.ai, prod.des-us.odevo.ai, chat.odevo.ai, chat-us.odevo.ai (live user-facing services)",
+      "**Protected deployment namespaces / environments**: vm1–vm8 (EU production VMs), us01–us05 (US production VMs); vm-sandbox and vm-staging are lower environments",
+      "**Protected IaC scopes**: IAM, RBAC, networking, quota, and node-pool resources in infra/terraform/azure/ and infra/terraform/aws/; anything whose name or tag carries `prod` or `production` as a whole word or name segment",
+      "### User-specific",
+      "**Primary use of Claude Code**: GitOps infrastructure and service configuration management (docker-compose, Terraform, Caddyfile, minidep YAML)",
+      "**Trusted repo**: odevo-dev/ai-deploy (private) at /Users/mijo/code/github/odevo/ai-deploy and its origin remote",
+      "**Org-specific CLIs**: az (Azure CLI, 6× shell history), terraform (13× shell history), docker (17× shell history), tilt (7× shell history), herdr (7× shell history), gh (1× shell history)"
+    ],
+    "allow": [
+      "$defaults",
+      "Bash(docker compose config:*) — validate compose files in this repo",
+      "Bash(terraform fmt:*) — format Terraform files in this repo",
+      "Bash(terraform validate:*) — validate Terraform in this repo",
+      "Bash(az account show:*) — read-only Azure context check"
+    ],
+    "soft_deny": [
+      "$defaults",
+      "Bash(terraform apply:*) — Terraform apply must be reviewed",
+      "Bash(terraform destroy:*) — Terraform destroy must be reviewed",
+      "Bash(az vm restart:*) — restarting production VMs must be reviewed"
+    ]
+  }
 }
