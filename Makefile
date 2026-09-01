@@ -67,6 +67,7 @@ omz: xcode-clt ## Install oh-my-zsh and configure shell
 	if [ ! -d "$$HOME/.oh-my-zsh" ]; then \
 		echo "💻 Installing oh-my-zsh..."; \
 		RUNZSH=no CHSH=no sh -c "$$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"; \
+		[ -f "$$HOME/.zshrc" ] && mv "$$HOME/.zshrc" "$$HOME/.zshrc.omz-default"; \
 	else \
 		echo "💻 oh-my-zsh is already installed."; \
 	fi
@@ -83,6 +84,8 @@ omz: xcode-clt ## Install oh-my-zsh and configure shell
 	done
 	ZSHRC_SOURCE="source $$(pwd)/$(BOOTSTRAP_DIR)/omz/zshrc.sh"; \
 	sed -i.bak '\|source .*/$(BOOTSTRAP_DIR)/.*/zshrc\.sh|d' "$$HOME/.zshrc" 2>/dev/null || true; \
+	rm -f "$$HOME/.zshrc.bak"; \
+	sed -i.bak '\|source .*oh-my-zsh\.sh|d' "$$HOME/.zshrc" 2>/dev/null || true; \
 	rm -f "$$HOME/.zshrc.bak"; \
 	if grep -qF "$$ZSHRC_SOURCE" "$$HOME/.zshrc" 2>/dev/null; then \
 		echo "  🔗 .zshrc already linked."; \
@@ -106,7 +109,7 @@ brewfile: homebrew ## Install packages listed in Brewfile
 		echo "⚠️ Base Brewfile not found. Skipping package installation."; \
 	else \
 		echo "📦 Installing Homebrew packages from Brewfile..."; \
-		$(BREW_BIN_PATH)/brew bundle --no-lock --file=$(BOOTSTRAP_DIR)/homebrew/Brewfile.base; \
+		$(BREW_BIN_PATH)/brew bundle --file=$(BOOTSTRAP_DIR)/homebrew/Brewfile.base; \
 	fi
 
 python: homebrew ## Install Python via uv
